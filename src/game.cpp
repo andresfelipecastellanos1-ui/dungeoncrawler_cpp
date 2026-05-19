@@ -1,285 +1,179 @@
 #include "game.h"
 #include <stdio.h>
 #include <string.h>
-#include <stdlib.h>
 
-#ifdef _WIN32
-#include <conio.h>
-#else
-#include <termios.h>
-#include <unistd.h>
-#endif
-
-void initGame(struct Game* game)
+void initgame(struct game* g)
 {
+    memset(g, 0, sizeof(struct game));
+    g->numrooms = 8;
+    g->numenemies = 3;
+    g->player.health = 100;
+    g->player.roomindex = 0;
+    g->player.x = 3;
+    g->player.y = 5;
+    g->player.inventory = -1;
+
     int i, j, k;
-    memset(game, 0, sizeof(struct Game));
-
-    game->currentRoomCount = 8;
-    game->numEnemies = 4;
-    game->numItems = 3;
-
-    for (i = 0; i < game->currentRoomCount; i++)
+    for(i = 0; i < g->numrooms; i++)
     {
-        for (j = 0; j < ROOM_HEIGHT; j++)
-            for (k = 0; k < ROOM_WIDTH; k++)
-                game->rooms[i].map[j][k] = ' ';
+        for(j = 0; j < room_height; j++)
+            for(k = 0; k < room_width; k++)
+                g->rooms[i].map[j][k] = ' ';
 
-        for (k = 0; k < ROOM_WIDTH; k++) {
-            game->rooms[i].map[0][k] = '#';
-            game->rooms[i].map[ROOM_HEIGHT-1][k] = '#';
+        for(k = 0; k < room_width; k++) {
+            g->rooms[i].map[0][k] = '#';
+            g->rooms[i].map[room_height-1][k] = '#';
         }
-        for (j = 0; j < ROOM_HEIGHT; j++) {
-            game->rooms[i].map[j][0] = '#';
-            game->rooms[i].map[j][ROOM_WIDTH-1] = '#';
+        for(j = 0; j < room_height; j++) {
+            g->rooms[i].map[j][0] = '#';
+            g->rooms[i].map[j][room_width-1] = '#';
         }
-        game->rooms[i].itemIndex = -1;
+
+        g->rooms[i].itemindex = -1;
     }
 
-    game->rooms[0].connections[DIR_SOUTH] = &game->rooms[1];
-    game->rooms[1].connections[DIR_NORTH] = &game->rooms[0];
-    game->rooms[1].connections[DIR_EAST]  = &game->rooms[2];
-    game->rooms[2].connections[DIR_WEST]  = &game->rooms[1];
-    game->rooms[2].connections[DIR_SOUTH] = &game->rooms[3];
-    game->rooms[3].connections[DIR_NORTH] = &game->rooms[2];
-    game->rooms[3].connections[DIR_WEST]  = &game->rooms[4];
-    game->rooms[4].connections[DIR_EAST]  = &game->rooms[3];
-    game->rooms[4].connections[DIR_NORTH] = &game->rooms[5];
-    game->rooms[5].connections[DIR_SOUTH] = &game->rooms[4];
-    game->rooms[5].connections[DIR_EAST]  = &game->rooms[6];
-    game->rooms[6].connections[DIR_WEST]  = &game->rooms[5];
-    game->rooms[6].connections[DIR_SOUTH] = &game->rooms[7];
-    game->rooms[7].connections[DIR_NORTH] = &game->rooms[6];
-    game->rooms[7].connections[DIR_WEST]  = &game->rooms[0];
-    game->rooms[0].connections[DIR_EAST]  = &game->rooms[7];
+    for(i=3; i<17; i++) g->rooms[0].map[4][i] = '#';
+    for(i=3; i<17; i++) g->rooms[0].map[8][i] = '#';
 
-    game->player.roomIndex = 0;
-    game->player.x = 3;
-    game->player.y = 3;
-    game->player.health = 100;
-    game->player.inventoryItem = -1;
+    for(i=3; i<10; i++) g->rooms[1].map[i][6] = '#';
+    for(i=3; i<10; i++) g->rooms[1].map[i][13] = '#';
 
-    game->enemies[0].roomIndex = 2; game->enemies[0].x = 10; game->enemies[0].y = 5;
-    game->enemies[0].health = 30; game->enemies[0].type = 0;
+    for(i=4; i<16; i++) g->rooms[2].map[4][i] = '#';
+    for(i=4; i<16; i++) g->rooms[2].map[9][i] = '#';
 
-    game->enemies[1].roomIndex = 4; game->enemies[1].x = 8; game->enemies[1].y = 7;
-    game->enemies[1].health = 30; game->enemies[1].type = 0;
+    for(i=3; i<10; i++) g->rooms[3].map[i][5] = '#';
+    for(i=3; i<10; i++) g->rooms[3].map[i][14] = '#';
 
-    game->enemies[2].roomIndex = 6; game->enemies[2].x = 12; game->enemies[2].y = 4;
-    game->enemies[2].health = 40; game->enemies[2].type = 1;
+    for(i=4; i<16; i++) g->rooms[4].map[3][i] = '#';
+    for(i=4; i<16; i++) g->rooms[4].map[8][i] = '#';
 
-    game->enemies[3].roomIndex = 7; game->enemies[3].x = 5; game->enemies[3].y = 8;
-    game->enemies[3].health = 40; game->enemies[3].type = 1;
+    for(i=3; i<17; i++) g->rooms[5].map[4][i] = '#';
+    for(i=3; i<17; i++) g->rooms[5].map[8][i] = '#';
 
-    game->items[0].symbol = 'K'; game->items[0].name = "Llave"; game->items[0].effect = 0;
-    game->rooms[3].itemIndex = 0; game->rooms[3].itemX = 10; game->rooms[3].itemY = 5;
+    g->rooms[0].map[5][room_width-1] = ' ';
+    g->rooms[1].map[room_height-1][10] = ' ';
+    g->rooms[1].map[5][0] = ' ';
+    g->rooms[2].map[room_height-1][10] = ' ';
+    g->rooms[3].map[5][room_width-1] = ' ';
+    g->rooms[4].map[room_height-1][10] = ' ';
+    g->rooms[5].map[5][0] = ' ';
 
-    game->items[1].symbol = 'P'; game->items[1].name = "Pocion"; game->items[1].effect = 1;
-    game->rooms[5].itemIndex = 1; game->rooms[5].itemX = 12; game->rooms[5].itemY = 6;
+    g->rooms[0].connections[dir_east] = &g->rooms[1];
+    g->rooms[1].connections[dir_west] = &g->rooms[0];
+    g->rooms[1].connections[dir_south] = &g->rooms[2];
+    g->rooms[2].connections[dir_north] = &g->rooms[1];
+    g->rooms[2].connections[dir_south] = &g->rooms[3];
+    g->rooms[3].connections[dir_north] = &g->rooms[2];
+    g->rooms[3].connections[dir_east] = &g->rooms[4];
+    g->rooms[4].connections[dir_west] = &g->rooms[3];
+    g->rooms[4].connections[dir_south] = &g->rooms[5];
+    g->rooms[5].connections[dir_north] = &g->rooms[4];
 
-    game->gameOver = false;
-    game->playerWon = false;
+    g->enemies[0].roomindex = 2; g->enemies[0].x = 10; g->enemies[0].y = 5; g->enemies[0].type = 0;
+    g->enemies[1].roomindex = 4; g->enemies[1].x = 12; g->enemies[1].y = 6; g->enemies[1].type = 0;
+    g->enemies[2].roomindex = 6; g->enemies[2].x = 8; g->enemies[2].y = 4; g->enemies[2].type = 1;
+
+    g->rooms[3].itemindex = 0;
+    g->rooms[3].itemx = 10;
+    g->rooms[3].itemy = 5;
 }
 
-void renderRoom(const struct Game* game)
+void renderroom(const struct game* g)
 {
+    const struct room* r = &g->rooms[g->player.roomindex];
     int i, j;
-    const struct Room* r = &game->rooms[game->player.roomIndex];
 
-    printf("\n=== HABITACION %d ===\n", game->player.roomIndex);
+    printf("\n=== HABITACION %d ===\n", g->player.roomindex);
 
-    for (i = 0; i < ROOM_HEIGHT; i++)
+    for(i = 0; i < room_height; i++)
     {
-        for (j = 0; j < ROOM_WIDTH; j++)
+        for(j = 0; j < room_width; j++)
         {
-            if (i == game->player.y && j == game->player.x) { printf("@"); continue; }
-
-            int drawn = 0;
-            for (int e = 0; e < game->numEnemies; e++)
-            {
-                if (game->enemies[e].roomIndex == game->player.roomIndex &&
-                    game->enemies[e].x == j && game->enemies[e].y == i)
-                {
-                    printf(game->enemies[e].type == 0 ? "X" : "P");
-                    drawn = 1;
-                    break;
-                }
-            }
-            if (drawn) continue;
-
-            if (r->itemIndex != -1 && i == r->itemY && j == r->itemX)
-            {
-                printf("%c", game->items[r->itemIndex].symbol);
-                continue;
-            }
+            if(i == g->player.y && j == g->player.x) { printf("@"); continue; }
+            if(g->enemies[0].roomindex == g->player.roomindex && g->enemies[0].x == j && g->enemies[0].y == i) { printf("X"); continue; }
+            if(g->enemies[1].roomindex == g->player.roomindex && g->enemies[1].x == j && g->enemies[1].y == i) { printf("X"); continue; }
+            if(g->enemies[2].roomindex == g->player.roomindex && g->enemies[2].x == j && g->enemies[2].y == i) { printf("P"); continue; }
+            if(r->itemindex != -1 && i == r->itemy && j == r->itemx) { printf("K"); continue; }
 
             printf("%c", r->map[i][j]);
         }
         printf("\n");
     }
 
-    printf("Vida: %d | Inventario: %s\n", game->player.health,
-           game->player.inventoryItem == -1 ? "VACIO" : game->items[game->player.inventoryItem].name);
-    printf("WASD mover | E recoger/soltar | Q salir\n");
+    printf("Vida: %d | Inventario: %s\n", g->player.health, g->player.inventory == -1 ? "VACIO" : "LLAVE");
+    printf("WASD = mover | E = recoger | Q = salir\n");
 }
 
-void handleInput(struct Game* game)
+void handleinput(struct game* g)
 {
     char key = getchar();
 
-    if (key == 'q' || key == 'Q') { game->gameOver = true; return; }
+    if(key == 'q' || key == 'Q') {
+        g->gameover = true;
+        return;
+    }
 
-    int newX = game->player.x;
-    int newY = game->player.y;
+    int nx = g->player.x;
+    int ny = g->player.y;
 
-    if (key == 'w' || key == 'W') newY--;
-    if (key == 's' || key == 'S') newY++;
-    if (key == 'a' || key == 'A') newX--;
-    if (key == 'd' || key == 'D') newX++;
+    if(key == 'w' || key == 'W') ny--;
+    if(key == 's' || key == 'S') ny++;
+    if(key == 'a' || key == 'A') nx--;
+    if(key == 'd' || key == 'D') nx++;
 
-    const struct Room* r = &game->rooms[game->player.roomIndex];
+    const struct room* r = &g->rooms[g->player.roomindex];
 
-    if (newX > 0 && newX < ROOM_WIDTH-1 && newY > 0 && newY < ROOM_HEIGHT-1 && r->map[newY][newX] != '#')
+    if(nx > 0 && nx < room_width-1 && ny > 0 && ny < room_height-1 && r->map[ny][nx] != '#')
     {
-        game->player.x = newX;
-        game->player.y = newY;
+        g->player.x = nx;
+        g->player.y = ny;
     }
 
-    if (game->player.x == 1 && r->connections[DIR_WEST]) {
-        game->player.roomIndex = (int)(r->connections[DIR_WEST] - game->rooms);
-        game->player.x = ROOM_WIDTH - 3; return;
-    }
-    if (game->player.x == ROOM_WIDTH-2 && r->connections[DIR_EAST]) {
-        game->player.roomIndex = (int)(r->connections[DIR_EAST] - game->rooms);
-        game->player.x = 2; return;
-    }
-    if (game->player.y == 1 && r->connections[DIR_NORTH]) {
-        game->player.roomIndex = (int)(r->connections[DIR_NORTH] - game->rooms);
-        game->player.y = ROOM_HEIGHT - 3; return;
-    }
-    if (game->player.y == ROOM_HEIGHT-2 && r->connections[DIR_SOUTH]) {
-        game->player.roomIndex = (int)(r->connections[DIR_SOUTH] - game->rooms);
-        game->player.y = 2; return;
-    }
-
-    if ((key == 'e' || key == 'E') && r->itemIndex != -1 &&
-        game->player.x == r->itemX && game->player.y == r->itemY)
+    if((key == 'e' || key == 'E') && r->itemindex != -1 && 
+       g->player.x == r->itemx && g->player.y == r->itemy)
     {
-        if (game->player.inventoryItem == -1)
+        g->player.inventory = 0;
+        struct room* room_mod = (struct room*)r;
+        room_mod->itemindex = -1;
+    }
+
+    if(g->player.x == room_width-2 && r->connections[dir_east] != NULL) {
+        g->player.roomindex = (int)(r->connections[dir_east] - g->rooms);
+        g->player.x = 2;
+    }
+    if(g->player.x == 1 && r->connections[dir_west] != NULL) {
+        g->player.roomindex = (int)(r->connections[dir_west] - g->rooms);
+        g->player.x = room_width-3;
+    }
+    if(g->player.y == room_height-2 && r->connections[dir_south] != NULL) {
+        g->player.roomindex = (int)(r->connections[dir_south] - g->rooms);
+        g->player.y = 2;
+    }
+    if(g->player.y == 1 && r->connections[dir_north] != NULL) {
+        g->player.roomindex = (int)(r->connections[dir_north] - g->rooms);
+        g->player.y = room_height-3;
+    }
+}
+
+void updategame(struct game* g)
+{
+    int i;
+    for(i = 0; i < g->numenemies; i++)
+    {
+        struct enemy* e = &g->enemies[i];
+        if(e->roomindex != g->player.roomindex) continue;
+
+        const struct room* r = &g->rooms[e->roomindex];
+
+        if(e->type == 0)
         {
-            game->player.inventoryItem = r->itemIndex;
-            r->itemIndex = -1;
+            if(g->player.x > e->x && r->map[e->y][e->x+1] != '#') e->x++;
+            else if(g->player.x < e->x && r->map[e->y][e->x-1] != '#') e->x--;
+            else if(g->player.y > e->y && r->map[e->y+1][e->x] != '#') e->y++;
+            else if(g->player.y < e->y && r->map[e->y-1][e->x] != '#') e->y--;
         }
     }
-    else if ((key == 'e' || key == 'E') && game->player.inventoryItem != -1)
-    {
-        r->itemIndex = game->player.inventoryItem;
-        r->itemX = game->player.x;
-        r->itemY = game->player.y;
-        game->player.inventoryItem = -1;
-    }
-}
 
-void updateEnemies(struct Game* game)
-{
-    for (int i = 0; i < game->numEnemies; i++)
-    {
-        struct Enemy* e = &game->enemies[i];
-        if (e->health <= 0 || e->roomIndex != game->player.roomIndex) continue;
-
-        const struct Room* r = &game->rooms[e->roomIndex];
-
-        if (e->type == 0)
-        {
-            int dx = game->player.x - e->x;
-            int dy = game->player.y - e->y;
-            if (abs(dx) > abs(dy))
-            {
-                if (dx > 0 && r->map[e->y][e->x+1] != '#') e->x++;
-                else if (dx < 0 && r->map[e->y][e->x-1] != '#') e->x--;
-            }
-            else
-            {
-                if (dy > 0 && r->map[e->y+1][e->x] != '#') e->y++;
-                else if (dy < 0 && r->map[e->y-1][e->x] != '#') e->y--;
-            }
-        }
-        else
-        {
-            e->patrolStep = (e->patrolStep + 1) % 6;
-            if (e->patrolStep < 3)
-                if (r->map[e->y][e->x+1] != '#') e->x++;
-            else
-                if (r->map[e->y][e->x-1] != '#') e->x--;
-        }
-    }
-}
-
-void checkPlayerEnemyCollisions(struct Game* game)
-{
-    for (int i = 0; i < game->numEnemies; i++)
-    {
-        struct Enemy* e = &game->enemies[i];
-        if (e->health > 0 && e->roomIndex == game->player.roomIndex &&
-            e->x == game->player.x && e->y == game->player.y)
-        {
-            game->player.health -= 20;
-            if (game->player.x > 1) game->player.x--;
-        }
-    }
-}
-
-void checkWinCondition(struct Game* game)
-{
-    if (game->player.inventoryItem == 0 && game->player.roomIndex == 7)
-        game->playerWon = true;
-
-    if (game->player.health <= 0)
-        game->gameOver = true;
-}
-
-void updateGame(struct Game* game)
-{
-    updateEnemies(game);
-    checkPlayerEnemyCollisions(game);
-    checkWinCondition(game);
-}
-
-void clearScreen(void)
-{
-    #ifdef _WIN32
-        system("cls");
-    #else
-        printf("\033[2J\033[H");
-    #endif
-}
-
-void showTitleScreen(void)
-{
-    clearScreen();
-    printf("=======================================\n");
-    printf("     DUNGEON CRAWLER\n");
-    printf("=======================================\n\n");
-    printf("Presiona ENTER para comenzar...\n");
-    getchar();
-}
-
-void showGameOverScreen(const struct Game* game)
-{
-    clearScreen();
-    printf("=======================================\n");
-    printf("              GAME OVER\n");
-    printf("=======================================\n\n");
-    printf("Presiona ENTER para salir...\n");
-    getchar();
-}
-
-void showWinScreen(const struct Game* game)
-{
-    clearScreen();
-    printf("=======================================\n");
-    printf("           ¡HAS GANADO!\n");
-    printf("=======================================\n\n");
-    printf("Presiona ENTER para salir...\n");
-    getchar();
+    if(g->player.health <= 0) g->gameover = true;
+    if(g->player.inventory == 0 && g->player.roomindex == 5) g->won = true;
 }

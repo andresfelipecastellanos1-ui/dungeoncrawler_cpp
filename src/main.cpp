@@ -3,24 +3,28 @@
 
 int main(void)
 {
-    struct Game game;
+    struct game g;
 
-    showTitleScreen();
+    printf("=== DUNGEON CRAWLER ===\n\n");
+    printf("Presiona ENTER para comenzar...\n");
+    getchar();
 
-    initGame(&game);
+    initgame(&g);
 
-    while (!game.gameOver && !game.playerWon)
+    while (!g.gameover && !g.won)
     {
-        clearScreen();
-        renderRoom(&game);
-        handleInput(&game);
-        updateGame(&game);
+        renderroom(&g);
+        handleinput(&g);
+        updategame(&g);
     }
 
-    if (game.playerWon)
-        showWinScreen(&game);
+    if (g.won)
+        printf("\n¡GANASTE! Escapaste del dungeon.\n");
     else
-        showGameOverScreen(&game);
+        printf("\nGame Over...\n");
+
+    printf("\nPresiona ENTER para salir...\n");
+    getchar();
 
     return 0;
 }
