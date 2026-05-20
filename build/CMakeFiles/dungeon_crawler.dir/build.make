@@ -112,6 +112,9 @@ dungeon_crawler_EXTERNAL_OBJECTS =
 dungeon_crawler.exe: CMakeFiles/dungeon_crawler.dir/src/main.cpp.obj
 dungeon_crawler.exe: CMakeFiles/dungeon_crawler.dir/src/game.cpp.obj
 dungeon_crawler.exe: CMakeFiles/dungeon_crawler.dir/build.make
+dungeon_crawler.exe: C:/SFML/lib/libsfml-graphics.a
+dungeon_crawler.exe: C:/SFML/lib/libsfml-window.a
+dungeon_crawler.exe: C:/SFML/lib/libsfml-system.a
 dungeon_crawler.exe: CMakeFiles/dungeon_crawler.dir/linkLibs.rsp
 dungeon_crawler.exe: CMakeFiles/dungeon_crawler.dir/objects1.rsp
 dungeon_crawler.exe: CMakeFiles/dungeon_crawler.dir/link.txt

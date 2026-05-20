@@ -1,6 +1,7 @@
 #include "game.h"
 #include <stdio.h>
 #include <string.h>
+#include <conio.h>
 
 void initgame(struct game* g)
 {
@@ -28,7 +29,6 @@ void initgame(struct game* g)
             g->rooms[i].map[j][0] = '#';
             g->rooms[i].map[j][room_width-1] = '#';
         }
-
         g->rooms[i].itemindex = -1;
     }
 
@@ -69,9 +69,9 @@ void initgame(struct game* g)
     g->rooms[4].connections[dir_south] = &g->rooms[5];
     g->rooms[5].connections[dir_north] = &g->rooms[4];
 
-    g->enemies[0].roomindex = 2; g->enemies[0].x = 10; g->enemies[0].y = 5; g->enemies[0].type = 0;
-    g->enemies[1].roomindex = 4; g->enemies[1].x = 12; g->enemies[1].y = 6; g->enemies[1].type = 0;
-    g->enemies[2].roomindex = 6; g->enemies[2].x = 8; g->enemies[2].y = 4; g->enemies[2].type = 1;
+    g->enemies[0].roomindex = 0; g->enemies[0].x = 10; g->enemies[0].y = 6; g->enemies[0].type = 0;
+    g->enemies[1].roomindex = 2; g->enemies[1].x = 10; g->enemies[1].y = 5; g->enemies[1].type = 0;
+    g->enemies[2].roomindex = 4; g->enemies[2].x = 12; g->enemies[2].y = 6; g->enemies[2].type = 1;
 
     g->rooms[3].itemindex = 0;
     g->rooms[3].itemx = 10;
@@ -89,10 +89,11 @@ void renderroom(const struct game* g)
     {
         for(j = 0; j < room_width; j++)
         {
-            if(i == g->player.y && j == g->player.x) { printf("@"); continue; }
             if(g->enemies[0].roomindex == g->player.roomindex && g->enemies[0].x == j && g->enemies[0].y == i) { printf("X"); continue; }
             if(g->enemies[1].roomindex == g->player.roomindex && g->enemies[1].x == j && g->enemies[1].y == i) { printf("X"); continue; }
             if(g->enemies[2].roomindex == g->player.roomindex && g->enemies[2].x == j && g->enemies[2].y == i) { printf("P"); continue; }
+
+            if(i == g->player.y && j == g->player.x) { printf("@"); continue; }
             if(r->itemindex != -1 && i == r->itemy && j == r->itemx) { printf("K"); continue; }
 
             printf("%c", r->map[i][j]);
@@ -106,7 +107,7 @@ void renderroom(const struct game* g)
 
 void handleinput(struct game* g)
 {
-    char key = getchar();
+    char key = _getch();
 
     if(key == 'q' || key == 'Q') {
         g->gameover = true;
@@ -172,6 +173,9 @@ void updategame(struct game* g)
             else if(g->player.y > e->y && r->map[e->y+1][e->x] != '#') e->y++;
             else if(g->player.y < e->y && r->map[e->y-1][e->x] != '#') e->y--;
         }
+
+        if(e->x == g->player.x && e->y == g->player.y)
+            g->player.health -= 20;
     }
 
     if(g->player.health <= 0) g->gameover = true;

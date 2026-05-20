@@ -22,7 +22,7 @@ CMAKE_AR:FILEPATH=C:/MinGW/bin/ar.exe
 
 //Choose the type of build, options are: None Debug Release RelWithDebInfo
 // MinSizeRel ...
-CMAKE_BUILD_TYPE:STRING=
+CMAKE_BUILD_TYPE:STRING=Release
 
 //Enable/Disable color output during build.
 CMAKE_COLOR_MAKEFILE:BOOL=ON
@@ -253,6 +253,12 @@ DungeonCrawler_IS_TOP_LEVEL:STATIC=ON
 
 //Value Computed by CMake
 DungeonCrawler_SOURCE_DIR:STATIC=C:/Users/LENOVO/Desktop/dungeon-crawler
+
+//The directory containing a CMake configuration file for SFML.
+SFML_DIR:PATH=C:/SFML/lib/cmake/SFML
+
+//Path to a file.
+SFML_DOC_DIR:PATH=SFML_DOC_DIR-NOTFOUND
 
 
 ########################
