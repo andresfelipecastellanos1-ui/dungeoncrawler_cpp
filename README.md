@@ -15,9 +15,11 @@
 - Solo arreglos estáticos (sin new/delete)
 
 ## Controles
+
 - **WASD** → Mover
 - **E** → Recoger llave
 - **Q** → Salir
+## hola
 
 ## Cómo Compilar y Ejecutar (Windows)
 
@@ -26,7 +28,7 @@ cd build
 mingw32-make
 .\dungeon_crawler.exe
 
-## Cómo Compilar y Ejecutar(linux/macOS)
+## Cómo Compilar y Ejecutar (linux/macOS)
 
 ```bash
 cd build
