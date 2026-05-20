@@ -41,5 +41,6 @@ void initgame(struct game* g);
 void renderroom(const struct game* g);
 void handleinput(struct game* g);
 void updategame(struct game* g);
+void LimpiarPantalla();
 
 #endif
