@@ -19,7 +19,6 @@
 - **WASD** → Mover
 - **E** → Recoger llave
 - **Q** → Salir
-## hola
 
 ## Cómo Compilar y Ejecutar (Windows)
 
