@@ -89,6 +89,7 @@ void initgame(struct game* g)
 
 void renderroom(const struct game* g)
 {
+    void LimpiarPantalla();
     const struct room* r = &g->rooms[g->player.roomindex];
     int i, j;
 
