@@ -50,7 +50,6 @@ void initgame(struct game* g)
     for(i=3; i<17; i++) g->rooms[5].map[4][i] = '#';
     for(i=3; i<17; i++) g->rooms[5].map[8][i] = '#';
 
-    // Puertas corregidas
     g->rooms[0].map[5][room_width-1] = ' ';
     g->rooms[1].map[5][0] = ' ';
     g->rooms[1].map[room_height-2][10] = ' ';
