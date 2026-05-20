@@ -23,13 +23,17 @@
 ## Cómo Compilar y Ejecutar (Windows)
 
 ```bash
+- mkdir build
 - cd build
 - cmake .. -G "MinGW Makefiles" -DSFML_DIR="C:/msys64/mingw64/lib/cmake/SFML"
 - mingw32-make
 - dungeon_crawler.exe
+```
 
 ## Cómo Compilar y Ejecutar (linux/macOS)
 
+```bash
+- mkdir build
 - cd build
 - cmake ..
 - make
