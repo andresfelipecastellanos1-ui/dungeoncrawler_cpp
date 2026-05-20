@@ -2,6 +2,15 @@
 #include <stdio.h>
 #include <string.h>
 #include <conio.h>
+#include <cstdlib>
+
+void LimpiarPantalla() {
+#ifdef _WIN32
+    system("cls");
+#else
+    system("clear");
+#endif
+}
 
 void initgame(struct game* g)
 {
