@@ -22,14 +22,12 @@
 
 ## Cómo Compilar y Ejecutar (Windows)
 
-```bash
 cd build
 mingw32-make
 .\dungeon_crawler.exe
 
 ## Cómo Compilar y Ejecutar (linux/macOS)
 
-```bash
 cd build
 cmake ..
 make
